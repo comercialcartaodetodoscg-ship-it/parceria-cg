@@ -1,0 +1,598 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mercadinho de TODOS</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f3f6f4;--card:#fff;--ink:#14231c;--muted:#5f6f67;--line:#e1e8e4;
+  --pri:#0a8f4e;--pri2:#06703c;--pri-soft:#e3f5ec;--warn:#c76a00;--warn-soft:#fff3df;
+  --danger:#c62828;--danger-soft:#fdeaea;--blue:#1d5fd1;--blue-soft:#e7efff;--mu-soft:#eef1ef;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0f1512;--card:#17201c;--ink:#e8f0ec;--muted:#9bb0a5;--line:#26332d;
+  --pri:#2cc777;--pri2:#1fa962;--pri-soft:#173a28;--warn:#f5a524;--warn-soft:#3a2c10;
+  --danger:#ef5350;--danger-soft:#3b1a1a;--blue:#6ea0ff;--blue-soft:#1a2640;--mu-soft:#222c27;}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,system-ui,sans-serif;font-size:15px}
+header{background:linear-gradient(120deg,#06703c,#0a8f4e 60%,#18b46a);color:#fff;padding:20px 16px 58px}
+header .wrap{max-width:1100px;margin:0 auto}
+header h1{margin:0;font-size:24px;font-weight:800;letter-spacing:-.5px}
+header p{margin:4px 0 0;opacity:.9;font-size:13px}
+#app{max-width:1100px;margin:-42px auto 90px;padding:0 16px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;margin-bottom:14px}
+.card h2{margin:0 0 12px;font-size:16px}
+.narrow{max-width:420px;margin-left:auto;margin-right:auto}
+.center{text-align:center}
+.hello{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;margin-bottom:14px}
+.hello h2{margin:2px 0 6px;font-size:20px}.hello small{color:var(--muted)}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;margin-bottom:14px}
+.kpi{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:13px;border-left:5px solid var(--pri)}
+.kpi small{color:var(--muted);font-weight:700;text-transform:uppercase;font-size:10.5px;letter-spacing:.4px}
+.kpi b{display:block;font-size:21px;margin-top:4px}.kpi em{font-style:normal;color:var(--muted);font-size:12px}
+.kpi.w{border-left-color:var(--warn)}.kpi.d{border-left-color:var(--danger)}.kpi.b{border-left-color:var(--blue)}
+.menu{display:grid;gap:10px}
+.big{display:flex;flex-direction:column;align-items:flex-start;text-align:left;gap:2px;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:16px;padding:16px 16px 16px 64px;position:relative;font:700 16px Inter,sans-serif;cursor:pointer}
+.big span{position:absolute;left:16px;top:50%;transform:translateY(-50%);font-size:30px}
+.big small{font-weight:500;color:var(--muted);font-size:13px}
+.big:disabled{opacity:.55;cursor:default}
+.big:not(:disabled):hover{border-color:var(--pri)}
+label{display:flex;flex-direction:column;gap:5px;font-size:12px;font-weight:600;color:var(--muted);margin-bottom:10px}
+input,select,textarea{font:15px Inter,sans-serif;padding:10px 11px;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--ink);width:100%}
+textarea{min-height:70px;resize:vertical}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:0 10px}
+.btn{border:0;border-radius:10px;padding:11px 16px;font:700 14px Inter,sans-serif;cursor:pointer;background:var(--pri);color:#fff}
+.btn:hover{background:var(--pri2)}.btn:disabled{opacity:.5;cursor:default}
+.btn.sec{background:var(--pri-soft);color:var(--pri)}.btn.red{background:var(--danger-soft);color:var(--danger)}
+.btn.sm{padding:6px 10px;font-size:12px}.btn.full{width:100%;padding:13px}
+.link{background:none;border:0;color:var(--pri);font:600 14px Inter,sans-serif;cursor:pointer;padding:6px 0}
+.back{margin-bottom:8px;color:var(--ink);background:var(--card);border:1px solid var(--line);border-radius:10px;padding:8px 12px}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:10px}
+.chips{display:flex;gap:8px;flex-wrap:wrap}
+.chip{border:1px solid var(--line);background:var(--bg);color:var(--ink);border-radius:30px;padding:10px 14px;font:600 14px Inter,sans-serif;cursor:pointer}
+.chip.on{background:var(--pri);border-color:var(--pri);color:#fff}
+.item{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--line)}
+.item:last-child{border-bottom:0}.item small{display:block;color:var(--muted);font-size:13px;margin-top:2px}
+.item.off{opacity:.45}
+.step{display:flex;align-items:center;gap:6px}
+.step button{width:38px;height:38px;border-radius:10px;border:1px solid var(--line);background:var(--bg);color:var(--ink);font-size:20px;font-weight:700;cursor:pointer}
+.step button:disabled{opacity:.35}.step span{min-width:24px;text-align:center;font-weight:800;font-size:17px}
+.upload{position:relative;display:flex;align-items:center;justify-content:center;border:2px dashed var(--pri);border-radius:14px;padding:22px;color:var(--pri);font-size:15px;font-weight:700;cursor:pointer;background:var(--pri-soft);margin:0}
+.upload input{position:absolute;opacity:0;width:1px;height:1px}
+.prev{display:flex;align-items:center;gap:12px}
+.prev img{width:120px;height:120px;object-fit:cover;border-radius:12px;border:1px solid var(--line)}
+.pdf{padding:30px 16px;border-radius:12px;background:var(--mu-soft);font-weight:700}
+.opt{flex-direction:row;align-items:center;gap:12px;border:1px solid var(--line);border-radius:12px;padding:12px;font-size:15px;color:var(--ink);cursor:pointer}
+.opt input{width:20px;height:20px;flex:none;accent-color:var(--pri)}
+.opt small{display:block;color:var(--muted);font-weight:500;font-size:13px}
+.info{background:var(--blue-soft);color:var(--ink);border-radius:12px;padding:12px;margin:0 0 10px;font-size:14px;line-height:1.45}
+.req{font-size:11px;font-weight:700;color:var(--danger);background:var(--danger-soft);padding:2px 7px;border-radius:20px;vertical-align:middle}
+.resumo{position:sticky;bottom:10px;display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;background:var(--ink);color:var(--bg);border-radius:16px;padding:12px 14px;box-shadow:0 8px 24px rgba(0,0,0,.2);margin-bottom:14px}
+.resumo small{display:block;opacity:.75;font-size:12px}.resumo b{font-size:20px}
+.resumo select{width:auto;flex:1;min-width:150px}
+.lin{display:flex;justify-content:space-between;gap:10px;padding:10px 0;border-bottom:1px solid var(--line)}
+.lin:last-child{border-bottom:0}.lin small{display:block;color:var(--muted);font-size:12.5px;margin-top:2px}
+.lin .r{text-align:right;display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex:none}
+.tag{display:inline-block;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:700;white-space:nowrap}
+.tag.p{background:var(--warn-soft);color:var(--warn)}.tag.ok{background:var(--pri-soft);color:var(--pri)}
+.tag.no{background:var(--danger-soft);color:var(--danger)}.tag.b{background:var(--blue-soft);color:var(--blue)}.tag.mu{background:var(--mu-soft);color:var(--muted)}
+.red{color:var(--danger)}
+nav{display:flex;gap:4px;background:var(--card);padding:5px;border-radius:14px;border:1px solid var(--line);overflow-x:auto;margin-bottom:14px}
+nav button{white-space:nowrap;border:0;background:none;padding:9px 12px;border-radius:10px;font:600 13.5px Inter,sans-serif;color:var(--muted);cursor:pointer}
+nav button.on{background:var(--pri);color:#fff}
+.badge{background:var(--danger);color:#fff;border-radius:20px;padding:1px 7px;font-size:11px;margin-left:3px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.bl{margin-bottom:10px}.bl>div:first-child{display:flex;justify-content:space-between;gap:8px;font-size:14px}
+.bar{height:8px;background:var(--line);border-radius:6px;overflow:hidden;margin-top:4px}.bar i{display:block;height:100%;background:var(--pri)}
+.tbl{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{text-align:left;color:var(--muted);font-size:10.5px;text-transform:uppercase;letter-spacing:.4px;padding:8px;border-bottom:1px solid var(--line);white-space:nowrap}
+td{padding:8px;border-bottom:1px solid var(--line);vertical-align:middle}
+tr:last-child td{border-bottom:0}.nw{white-space:nowrap}
+td small{color:var(--muted)}
+.thumb{width:44px;height:44px;object-fit:cover;border-radius:8px;border:1px solid var(--line);display:block}
+.conf{display:flex;gap:14px;padding:12px 0;border-bottom:1px solid var(--line)}.conf:last-child{border-bottom:0}
+.conf img{width:110px;height:140px;object-fit:cover;border-radius:10px;border:1px solid var(--line)}
+.conf small{display:block;color:var(--muted);margin-top:2px}.conf ul{margin:8px 0;padding-left:18px;font-size:13.5px}
+.empty{color:var(--muted);text-align:center;padding:18px}
+pre{white-space:pre-wrap;background:var(--bg);border:1px dashed var(--line);border-radius:12px;padding:12px;font:13px/1.55 ui-monospace,Menlo,monospace;margin:0}
+.okicon{font-size:52px}
+.note{font-size:12.5px;color:var(--muted);margin:8px 0 0}
+#load{position:fixed;inset:0;background:rgba(0,0,0,.25);display:none;align-items:center;justify-content:center;z-index:50}
+#load.on{display:flex}
+#load div{background:var(--card);color:var(--ink);padding:16px 22px;border-radius:14px;font-weight:700;display:flex;gap:10px;align-items:center}
+#load i{width:18px;height:18px;border:3px solid var(--pri-soft);border-top-color:var(--pri);border-radius:50%;animation:g .8s linear infinite}
+@keyframes g{to{transform:rotate(360deg)}}
+.toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);max-width:92vw;background:var(--ink);color:var(--bg);padding:12px 18px;border-radius:12px;font-weight:600;opacity:0;transition:.3s;pointer-events:none;z-index:60;text-align:center}
+.toast.on{opacity:1}.toast.err{background:var(--danger);color:#fff}
+@media(max-width:760px){.two{grid-template-columns:1fr}.conf{flex-direction:column}.conf img{width:100%;height:220px}}
+</style>
+</head>
+<body>
+<header><div class="wrap">
+  <h1>🛒 Mercadinho de TODOS</h1>
+  <p>Cartão de TODOS · Campo Grande — retiradas de itens dos parceiros</p>
+</div></header>
+<div id="app"><div class="card empty">Carregando…</div></div>
+<div id="load"><div><i></i>Aguarde…</div></div>
+<div class="toast" id="toast"></div>
+
+<script>
+/* ======== CONFIGURAÇÃO: cole aqui a URL do App da Web do Google ======== */
+const API_URL = 'https://script.google.com/macros/s/AKfycbyYWCmGBEYb5UPPlm2DKhAZAjyeXcqJzlWg02dxP6F5USJNj7UDLGXoDTYO4lreZr0C/exec';
+/* ======================================================================= */
+const SETORES = ['Vendas','Adimplência','Retenção','Administrativo','Parcerias','Gerência'];
+const S = {cat:null,sess:null,senha:null,d:null,conta:null,tab:'painel',parc:null,cart:{},foto:null,comp:null,modo:'fiado',render:null,msgs:[]};
+
+const $ = id => document.getElementById(id);
+const app = () => $('app');
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const brl = v => (+v || 0).toLocaleString('pt-BR', {style:'currency', currency:'BRL'});
+const dBR = s => { if (!s) return ''; const [d, h] = String(s).split(' '); return d.split('-').reverse().join('/') + (h ? ' ' + h : ''); };
+const mesAtual = () => { const d = new Date(); return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0'); };
+const mesNome = m => { if (!m) return ''; const [y, mm] = m.split('-'); return new Date(y, mm - 1, 1).toLocaleDateString('pt-BR', {month:'long', year:'numeric'}); };
+const soma = a => a.reduce((s, r) => s + (+r.total || 0), 0);
+const sim = v => String(v).toUpperCase() === 'SIM';
+const ver = id => `https://drive.google.com/file/d/${encodeURIComponent(id)}/view`;
+const thumb = id => `https://drive.google.com/thumbnail?id=${encodeURIComponent(id)}&sz=w400`;
+const TAGS = {'PENDENTE':'p','EM ANÁLISE':'b','PAGO':'ok','CONFIRMADO':'ok','RECUSADO':'no','CANCELADA':'mu'};
+const tag = s => `<span class="tag ${TAGS[s] || 'mu'}">${esc(s === 'PENDENTE' ? 'EM ABERTO' : s)}</span>`;
+const voltar = fn => `<button class="link back" onclick="${fn}">← Voltar</button>`;
+function sto(k, v){ try{ if (v === undefined) return JSON.parse(sessionStorage.getItem(k) || 'null'); if (v === null) sessionStorage.removeItem(k); else sessionStorage.setItem(k, JSON.stringify(v)); }catch(e){ return null; } }
+function toast(t, err){ const e = $('toast'); e.textContent = t; e.className = 'toast on' + (err ? ' err' : ''); clearTimeout(e._t); e._t = setTimeout(() => e.className = 'toast', err ? 4000 : 2200); }
+const falha = e => toast(e.message || String(e), true);
+function carregando(on){ $('load').classList.toggle('on', on); }
+function copiar(t){
+  const fb = () => { const a = document.createElement('textarea'); a.value = t; document.body.appendChild(a); a.select(); try{ document.execCommand('copy'); toast('Copiado!'); }catch(e){} a.remove(); };
+  if (navigator.clipboard) navigator.clipboard.writeText(t).then(() => toast('Copiado!'), fb); else fb();
+}
+async function api(acao, dados = {}){
+  if (!/^https:\/\/script\.google(usercontent)?\.com\//.test(API_URL)) throw new Error('Sistema ainda não configurado: falta colar a URL do Google no arquivo.');
+  carregando(true);
+  try{
+    const r = await fetch(API_URL, {method:'POST', headers:{'Content-Type':'text/plain;charset=utf-8'}, body:JSON.stringify(Object.assign({acao}, dados))});
+    const j = await r.json();
+    if (!j.ok) throw new Error(j.erro || 'Erro no sistema.');
+    return j;
+  }catch(e){
+    if (e instanceof TypeError || e instanceof SyntaxError) throw new Error('Sem conexão com o sistema. Verifique a internet e tente de novo.');
+    throw e;
+  }finally{ carregando(false); }
+}
+function lerArquivo(file, maxW = 1280){
+  return new Promise((res, rej) => {
+    if (file.type === 'application/pdf'){
+      if (file.size > 5e6) return rej(new Error('PDF muito grande (máx. 5 MB).'));
+      const fr = new FileReader(); fr.onload = () => res(fr.result); fr.onerror = () => rej(new Error('Não foi possível ler o arquivo.')); fr.readAsDataURL(file); return;
+    }
+    if (!file.type.startsWith('image/')) return rej(new Error('Envie uma foto ou um PDF.'));
+    const img = new Image(), url = URL.createObjectURL(file);
+    img.onload = () => {
+      const k = Math.min(1, maxW / Math.max(img.width, img.height)), c = document.createElement('canvas');
+      c.width = Math.round(img.width * k); c.height = Math.round(img.height * k);
+      c.getContext('2d').drawImage(img, 0, 0, c.width, c.height); URL.revokeObjectURL(url);
+      res(c.toDataURL('image/jpeg', .72));
+    };
+    img.onerror = () => { URL.revokeObjectURL(url); rej(new Error('Formato de imagem não suportado. Tire a foto pela câmera.')); };
+    img.src = url;
+  });
+}
+async function anexar(inp, k){
+  const f = inp.files[0]; if (!f) return;
+  carregando(true);
+  try{ S[k] = await lerArquivo(f); }catch(e){ falha(e); } finally{ carregando(false); }
+  S.render();
+}
+function arquivoUI(k, rotulo, accept, camera){
+  const v = S[k];
+  if (v) return `<div class="prev">${v.startsWith('data:application/pdf') ? '<div class="pdf">📄 PDF anexado</div>' : `<img src="${v}" alt="Anexo">`}
+    <button class="btn sm red" onclick="S.${k}=null;S.render()">Trocar</button></div>`;
+  return `<label class="upload">${rotulo}<input type="file" accept="${accept}" ${camera ? 'capture="environment"' : ''} onchange="anexar(this,'${k}')"></label>`;
+}
+function infoPag(p){ return p && p.pagamento ? `<div class="info">💡 <b>Como pagar ${esc(p.nome)}:</b><br>${esc(p.pagamento).replace(/\n/g, '<br>')}</div>` : ''; }
+function baixarCSV(lista, nome){
+  const h = ['Data/hora','Colaborador','Setor','Parceiro','Item','Qtd','Valor unit.','Total','Modo','Status','Pago em','Registro','Foto','Obs'];
+  const q = s => '"' + String(s ?? '').replace(/"/g, '""') + '"', n = v => String((+v || 0).toFixed(2)).replace('.', ',');
+  const linhas = lista.map(r => [dBR(r.dataHora), r.colaborador, r.setor, r.parceiro, r.item, r.qtd, n(r.precoUnit), n(r.total), r.modo, r.status, dBR(r.pagoEm), r.pedidoId, r.fotoId ? ver(r.fotoId) : '', r.obs].map(q).join(';'));
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob(['﻿' + [h.map(q).join(';'), ...linhas].join('\n')], {type:'text/csv'}));
+  a.download = nome; a.click();
+}
+
+/* ================= INÍCIO ================= */
+async function iniciar(colab){
+  if (!colab && sto('adm')){ S.senha = sto('adm'); return recarregar(); }
+  try{ S.cat = await api('catalogo'); }
+  catch(e){ app().innerHTML = `<div class="card empty">⚠️ ${esc(e.message)}</div><p class="center"><button class="link" onclick="iniciar(true)">Tentar de novo</button></p>`; return; }
+  S.sess = sto('sess');
+  S.sess ? home() : telaLogin();
+}
+
+/* ================= COLABORADOR ================= */
+function telaLogin(){
+  const cs = S.cat.colaboradores;
+  const og = SETORES.map(s => { const l = cs.filter(c => c.setor === s); return l.length ? `<optgroup label="${s}">${l.map(c => `<option value="${esc(c.id)}">${esc(c.nome)}</option>`).join('')}</optgroup>` : ''; }).join('');
+  app().innerHTML = `<div class="card narrow">
+    <h2>👋 Identifique-se</h2>
+    ${cs.length ? `<label>Seu nome<select id="lColab" onchange="telaLoginPin()"><option value="">Selecione seu nome</option>${og}</select></label>
+    <div id="lPinBox"></div>` : '<div class="empty">Nenhum colaborador cadastrado ainda. Fale com o Thiago (Parcerias).</div>'}
+    <p class="note">Não achou seu nome ou esqueceu o PIN? Fale com o Thiago (Parcerias).</p></div>
+    <p class="center"><button class="link" onclick="telaGestorLogin()">🔒 Área do gestor</button></p>`;
+}
+function telaLoginPin(){
+  const c = S.cat.colaboradores.find(x => x.id === $('lColab').value);
+  if (!c){ $('lPinBox').innerHTML = ''; return; }
+  $('lPinBox').innerHTML = c.primeiroAcesso
+    ? `<div class="info">🔐 <b>Primeiro acesso!</b> Crie um PIN de 4 números. Ele é pessoal: não compartilhe.</div>
+       <label>Crie seu PIN<input id="lPin" type="password" inputmode="numeric" maxlength="4" autocomplete="off"></label>
+       <label>Repita o PIN<input id="lPin2" type="password" inputmode="numeric" maxlength="4" autocomplete="off"></label>
+       <button class="btn full" onclick="entrar(true)">Criar PIN e entrar</button>`
+    : `<label>Seu PIN (4 números)<input id="lPin" type="password" inputmode="numeric" maxlength="4" autocomplete="off" onkeydown="if(event.key==='Enter')entrar()"></label>
+       <button class="btn full" onclick="entrar()">Entrar</button>`;
+  $('lPin').focus();
+}
+async function entrar(criar){
+  const id = $('lColab').value, pin = $('lPin').value.trim();
+  if (!/^\d{4}$/.test(pin)) return toast('O PIN tem 4 números.', 1);
+  if (criar && pin !== $('lPin2').value.trim()) return toast('Os dois PINs não são iguais.', 1);
+  try{
+    const r = await api('login', {colabId:id, pin, criarPin:!!criar});
+    if (r.primeiroAcesso){ toast('Crie seu PIN primeiro.', 1); S.cat = await api('catalogo'); return telaLogin(); }
+    S.sess = {id, pin, nome:r.colab.nome, setor:r.colab.setor}; sto('sess', S.sess);
+    if (criar) toast('PIN criado! Guarde bem.');
+    home();
+  }catch(e){ falha(e); }
+}
+function sair(){ S.sess = null; sto('sess', null); iniciar(true); }
+const cred = () => ({colabId:S.sess.id, pin:S.sess.pin});
+
+async function home(){
+  Object.assign(S, {foto:null, comp:null, pp:null, selP:null});
+  try{ S.conta = await api('minhaConta', cred()); }
+  catch(e){ if (/PIN|inativo/.test(e.message)){ toast(e.message, 1); return sair(); } return falha(e); }
+  const rs = S.conta.retiradas, ab = rs.filter(r => r.status === 'PENDENTE'), an = rs.filter(r => r.status === 'EM ANÁLISE');
+  const mes = rs.filter(r => String(r.dataHora).startsWith(mesAtual()) && r.status !== 'CANCELADA');
+  const recus = S.conta.pagamentos.filter(p => p.status === 'RECUSADO').slice(0, 1)[0];
+  app().innerHTML = `<div class="hello"><div><small>Olá,</small><h2>${esc(S.sess.nome)}</h2><span class="tag mu">${esc(S.sess.setor)}</span></div><button class="link" onclick="sair()">Sair</button></div>
+  ${recus && ab.length ? `<div class="info" style="background:var(--danger-soft)">⚠️ Um pagamento seu foi recusado${recus.obs ? ': <b>' + esc(recus.obs) + '</b>' : ''}. Os itens voltaram para "em aberto".</div>` : ''}
+  <div class="kpis">
+    <div class="kpi w"><small>Em aberto (fiado)</small><b>${brl(soma(ab))}</b></div>
+    <div class="kpi b"><small>Pagamento em conferência</small><b>${brl(soma(an))}</b></div>
+    <div class="kpi"><small>Retirado em ${mesNome(mesAtual()).split(' ')[0]}</small><b>${brl(soma(mes))}</b></div>
+  </div>
+  <div class="menu">
+    <button class="big" onclick="novaRetirada()"><span>🛒</span>Nova retirada<small>Pegar itens dos parceiros</small></button>
+    <button class="big" onclick="telaPagar()" ${ab.length ? '' : 'disabled'}><span>💳</span>Pagar o que está em aberto<small>${ab.length ? ab.length + ' item(ns) · ' + brl(soma(ab)) : 'Nada em aberto 🎉'}</small></button>
+    <button class="big" onclick="telaHistorico()"><span>📜</span>Meu histórico<small>Retiradas e pagamentos</small></button>
+  </div>`;
+}
+
+async function novaRetirada(){
+  try{ S.cat = await api('catalogo'); }catch(e){ return falha(e); }
+  Object.assign(S, {parc:null, cart:{}, foto:null, comp:null, modo:'fiado'});
+  telaRet();
+}
+function telaRet(){
+  S.render = telaRet;
+  const C = S.cat, ps = C.parceiros.filter(p => C.itens.some(i => i.parceiroId === p.id));
+  const p = ps.find(x => x.id === S.parc);
+  const its = p ? C.itens.filter(i => i.parceiroId === p.id) : [];
+  const sel = its.filter(i => S.cart[i.id] > 0), tot = sel.reduce((s, i) => s + i.preco * S.cart[i.id], 0);
+  app().innerHTML = `${voltar('home()')}
+  <div class="card"><h2>1. Escolha o parceiro</h2>
+    ${ps.length ? `<div class="chips">${ps.map(x => `<button class="chip ${p && x.id === p.id ? 'on' : ''}" onclick="S.parc='${esc(x.id)}';S.cart={};telaRet()">${esc(x.nome)}</button>`).join('')}</div>` : '<div class="empty">Nenhum item disponível no momento.</div>'}
+  </div>
+  ${p ? `<div class="card"><h2>2. Escolha os itens</h2>
+    ${its.map(i => `<div class="item ${i.estoque <= 0 ? 'off' : ''}"><div><b>${esc(i.nome)}</b><small>${brl(i.preco)} · ${i.estoque > 0 ? i.estoque + ' disponível(is)' : 'Esgotado'}</small></div>
+      <div class="step"><button onclick="qtd('${esc(i.id)}',-1)" ${!S.cart[i.id] ? 'disabled' : ''} aria-label="Menos">−</button><span>${S.cart[i.id] || 0}</span><button onclick="qtd('${esc(i.id)}',1)" ${(S.cart[i.id] || 0) >= i.estoque ? 'disabled' : ''} aria-label="Mais">+</button></div></div>`).join('')}
+  </div>` : ''}
+  ${sel.length ? `<div class="card"><h2>3. Foto dos itens <span class="req">obrigatória</span></h2>
+      ${arquivoUI('foto', '📸 Tirar foto dos itens', 'image/*', true)}
+      <p class="note">A foto, a data e o horário ficam registrados automaticamente.</p></div>
+    <div class="card"><h2>4. Pagamento</h2>
+      <label class="opt"><input type="radio" name="modo" ${S.modo === 'fiado' ? 'checked' : ''} onchange="S.modo='fiado';telaRet()"><div><b>Pagar depois (fiado)</b><small>Fica em aberto na sua conta até você pagar</small></div></label>
+      <label class="opt"><input type="radio" name="modo" ${S.modo === 'pago' ? 'checked' : ''} onchange="S.modo='pago';telaRet()"><div><b>Já paguei</b><small>Anexo o comprovante agora</small></div></label>
+      ${S.modo === 'pago' ? infoPag(p) + arquivoUI('comp', '🧾 Anexar comprovante', 'image/*,application/pdf', false) : ''}
+    </div>
+    <div class="resumo"><div><small>${sel.reduce((s, i) => s + S.cart[i.id], 0)} item(ns)</small><b>${brl(tot)}</b></div><button class="btn" onclick="confirmarRet()">Confirmar retirada</button></div>` : ''}`;
+}
+function qtd(id, d){
+  const i = S.cat.itens.find(x => x.id === id); if (!i) return;
+  S.cart[id] = Math.max(0, Math.min(i.estoque, (S.cart[id] || 0) + d));
+  telaRet();
+}
+async function confirmarRet(){
+  const itens = Object.entries(S.cart).filter(([, q]) => q > 0).map(([itemId, qtd]) => ({itemId, qtd}));
+  if (!itens.length) return toast('Escolha os itens.', 1);
+  if (!S.foto) return toast('Tire a foto dos itens.', 1);
+  if (S.modo === 'pago' && !S.comp) return toast('Anexe o comprovante.', 1);
+  if (!confirm('Confirmar esta retirada?')) return;
+  try{
+    S.ult = await api('retirar', Object.assign(cred(), {itens, foto:S.foto, modo:S.modo, comprovante:S.modo === 'pago' ? S.comp : null}));
+    telaOk();
+  }catch(e){ falha(e); }
+}
+function telaOk(){
+  const u = S.ult;
+  const msg = `🛒 *RETIRADA – MERCADINHO DE TODOS*
+👤 Colaborador: ${S.sess.nome}
+🏢 Setor: ${S.sess.setor}
+🤝 Parceiro: ${u.parceiro}
+📦 Itens:
+${u.itens.map(i => `• ${i.qtd}x ${i.nome} – ${brl(i.total)}`).join('\n')}
+💰 Total: ${brl(u.total)}
+💳 Pagamento: ${S.modo === 'pago' ? 'Pago (comprovante enviado)' : 'Fiado (pagar depois)'}
+📅 ${dBR(u.dataHora)}
+🧾 Registro: ${u.pedidoId}`;
+  S.msgs = [msg];
+  app().innerHTML = `<div class="card center"><div class="okicon">✅</div><h2>Retirada registrada!</h2><p><b>${brl(u.total)}</b> · ${esc(u.parceiro)}</p>
+    <p class="note">${S.modo === 'pago' ? 'Seu comprovante foi enviado para conferência.' : 'O valor ficou em aberto na sua conta.'}</p></div>
+  <div class="card"><h2>📲 Agora envie no grupo do parceiro</h2><pre>${esc(msg)}</pre>
+    <p class="note">Copie, cole no grupo e anexe a mesma foto.</p>
+    <div class="row"><button class="btn" onclick="copiar(S.msgs[0])">Copiar mensagem</button><button class="btn sec" onclick="home()">Voltar ao início</button></div></div>`;
+}
+
+function telaPagar(){
+  S.render = telaPagar;
+  const ab = S.conta.retiradas.filter(r => r.status === 'PENDENTE');
+  const g = {}; ab.forEach(r => (g[r.parceiroId] = g[r.parceiroId] || []).push(r));
+  const pids = Object.keys(g); if (!pids.length) return home();
+  if (!g[S.pp]){ S.pp = pids[0]; S.selP = null; }
+  if (!S.selP) S.selP = new Set(g[S.pp].map(r => r.id));
+  const lista = g[S.pp], p = S.conta.parceiros.find(x => x.id === S.pp) || {nome:lista[0].parceiro};
+  const sel = lista.filter(r => S.selP.has(r.id));
+  app().innerHTML = `${voltar('home()')}
+  ${pids.length > 1 ? `<div class="card"><h2>Escolha o parceiro</h2><p class="note" style="margin:-6px 0 10px">Um pagamento por parceiro.</p><div class="chips">${pids.map(id => `<button class="chip ${id === S.pp ? 'on' : ''}" onclick="S.pp='${esc(id)}';S.selP=null;S.comp=null;telaPagar()">${esc(g[id][0].parceiro)} · ${brl(soma(g[id]))}</button>`).join('')}</div></div>` : ''}
+  <div class="card"><h2>Em aberto · ${esc(p.nome)}</h2>
+    ${lista.map(r => `<label class="opt"><input type="checkbox" ${S.selP.has(r.id) ? 'checked' : ''} onchange="togSel('${esc(r.id)}')"><div><b>${r.qtd}x ${esc(r.item)} · ${brl(r.total)}</b><small>${dBR(r.dataHora)}</small></div></label>`).join('')}
+  </div>
+  <div class="card"><h2>Comprovante <span class="req">obrigatório</span></h2>
+    ${infoPag(p)}
+    ${arquivoUI('comp', '🧾 Anexar comprovante', 'image/*,application/pdf', false)}
+    <p class="note">O pagamento fica <b>em conferência</b> até o Thiago (Parcerias) confirmar.</p></div>
+  <div class="resumo"><div><small>${sel.length} selecionado(s)</small><b>${brl(soma(sel))}</b></div><button class="btn" onclick="enviarPag()" ${sel.length ? '' : 'disabled'}>Enviar pagamento</button></div>`;
+}
+function togSel(id){ S.selP.has(id) ? S.selP.delete(id) : S.selP.add(id); telaPagar(); }
+async function enviarPag(){
+  if (!S.selP.size) return toast('Selecione o que está pagando.', 1);
+  if (!S.comp) return toast('Anexe o comprovante.', 1);
+  try{ const r = await api('pagar', Object.assign(cred(), {retiradaIds:[...S.selP], comprovante:S.comp})); toast('Pagamento de ' + brl(r.valor) + ' enviado para conferência!'); home(); }
+  catch(e){ falha(e); }
+}
+function telaHistorico(){
+  const rs = S.conta.retiradas, ps = S.conta.pagamentos;
+  app().innerHTML = `${voltar('home()')}
+  <div class="card"><h2>📦 Minhas retiradas</h2>${rs.length ? rs.map(r => `<div class="lin"><div><b>${r.qtd}x ${esc(r.item)}</b><small>${dBR(r.dataHora)} · ${esc(r.parceiro)} · ${esc(r.modo)}</small></div><div class="r"><b>${brl(r.total)}</b>${tag(r.status)}</div></div>`).join('') : '<div class="empty">Nenhuma retirada ainda.</div>'}</div>
+  <div class="card"><h2>💳 Meus pagamentos</h2>${ps.length ? ps.map(p => `<div class="lin"><div><b>${brl(p.valor)}</b><small>${dBR(p.dataHora)} · ${esc(p.forma)}${p.status === 'RECUSADO' && p.obs ? ' · Motivo: ' + esc(p.obs) : ''}</small></div><div class="r">${tag(p.status)}</div></div>`).join('') : '<div class="empty">Nenhum pagamento ainda.</div>'}</div>`;
+}
+
+/* ================= GESTOR ================= */
+function telaGestorLogin(){
+  app().innerHTML = `<div class="card narrow"><h2>🔒 Área do gestor</h2>
+    <label>Senha<input id="gSenha" type="password" onkeydown="if(event.key==='Enter')gestorEntrar()"></label>
+    <button class="btn full" onclick="gestorEntrar()">Entrar</button></div>
+    <p class="center"><button class="link" onclick="iniciar(true)">← Voltar para colaboradores</button></p>`;
+  $('gSenha').focus();
+}
+async function gestorEntrar(){
+  const s = $('gSenha').value; if (!s) return;
+  try{ S.d = await api('adminDados', {senha:s}); S.senha = s; sto('adm', s); S.tab = 'painel'; gestor(); }catch(e){ falha(e); }
+}
+function gestorSair(){ S.senha = null; sto('adm', null); iniciar(true); }
+async function recarregar(){
+  try{ S.d = await api('adminDados', {senha:S.senha}); gestor(); }
+  catch(e){ if (/Senha/.test(e.message)) return gestorSair(); app().innerHTML = `<div class="card empty">⚠️ ${esc(e.message)}</div><p class="center"><button class="link" onclick="recarregar()">Tentar de novo</button> · <button class="link" onclick="gestorSair()">Sair</button></p>`; }
+}
+async function acao(nome, dados, msg){
+  try{ await api(nome, Object.assign({senha:S.senha}, dados)); toast(msg || 'Salvo!'); S.edit = null; await recarregar(); return true; }
+  catch(e){ falha(e); return false; }
+}
+const parcNome = id => (S.d.parceiros.find(p => p.id === String(id)) || {}).nome || '—';
+const TABS = [['painel','📊 Painel'],['conf','✅ Conferência'],['ret','📦 Retiradas'],['est','🏷️ Itens e estoque'],['col','👥 Colaboradores'],['par','🤝 Parceiros'],['fech','🧾 Fechamento']];
+function gestor(){
+  const n = S.d.pagamentos.filter(p => p.status === 'EM ANÁLISE').length;
+  app().innerHTML = `<div class="hello"><div><small>Área do gestor</small><h2>Painel de controle</h2></div><div><button class="link" onclick="recarregar()">↻ Atualizar</button> &nbsp; <button class="link" onclick="gestorSair()">Sair</button></div></div>
+  <nav>${TABS.map(([k, t]) => `<button class="${S.tab === k ? 'on' : ''}" onclick="S.tab='${k}';S.edit=null;gestor()">${t}${k === 'conf' && n ? `<span class="badge">${n}</span>` : ''}</button>`).join('')}</nav>
+  <div id="gc"></div>`;
+  ({painel:gPainel, conf:gConf, ret:gRet, est:gEst, col:gCol, par:gPar, fech:gFech})[S.tab]();
+}
+function editar(t, id){
+  const fonte = {item:S.d.itens, colab:S.d.colaboradores, parc:S.d.parceiros}[t];
+  S.edit = {t, o:fonte.find(x => x.id === id)}; gestor(); window.scrollTo({top:0, behavior:'smooth'});
+}
+function barras(a, k, cor){
+  const o = {}; a.forEach(r => { o[k(r)] = (o[k(r)] || 0) + (+r.total || 0); });
+  const e = Object.entries(o).sort((x, y) => y[1] - x[1]); if (!e.length) return '<div class="empty">Sem dados.</div>';
+  const mx = e[0][1] || 1;
+  return e.map(([n, v]) => `<div class="bl"><div><span>${esc(n)}</span><b>${brl(v)}</b></div><div class="bar"><i style="width:${v / mx * 100}%;${cor ? 'background:' + cor : ''}"></i></div></div>`).join('');
+}
+
+function gPainel(){
+  const D = S.d, m = S.pm || mesAtual();
+  const rm = D.retiradas.filter(r => String(r.dataHora).startsWith(m) && r.status !== 'CANCELADA');
+  const ab = D.retiradas.filter(r => r.status === 'PENDENTE'), an = D.retiradas.filter(r => r.status === 'EM ANÁLISE');
+  const baixo = D.itens.filter(i => sim(i.ativo) && +i.estoque <= (+i.estoqueMinimo || 0));
+  $('gc').innerHTML = `<label style="max-width:200px">Mês<input type="month" value="${m}" onchange="S.pm=this.value;gestor()"></label>
+  <div class="kpis">
+    <div class="kpi"><small>Retirado no mês</small><b>${brl(soma(rm))}</b><em>${rm.length} lançamento(s)</em></div>
+    <div class="kpi b"><small>Pago no mês (confirmado)</small><b>${brl(soma(rm.filter(r => r.status === 'PAGO')))}</b></div>
+    <div class="kpi w"><small>Em aberto (geral)</small><b>${brl(soma(ab))}</b><em>${new Set(ab.map(r => r.colaboradorId)).size} colaborador(es)</em></div>
+    <div class="kpi b"><small>Aguardando conferência</small><b>${brl(soma(an))}</b></div>
+    <div class="kpi d"><small>Estoque baixo</small><b>${baixo.length}</b><em>item(ns)</em></div>
+  </div>
+  <div class="two"><div class="card"><h2>⏳ Em aberto por colaborador</h2>${barras(ab, r => r.colaborador, 'var(--warn)')}</div>
+    <div class="card"><h2>🏢 Por setor no mês</h2>${barras(rm, r => r.setor, 'var(--blue)')}</div></div>
+  <div class="two"><div class="card"><h2>🤝 Por parceiro no mês</h2>${barras(rm, r => r.parceiro)}</div>
+    <div class="card"><h2>⚠️ Estoque baixo</h2>${baixo.length ? baixo.map(i => `<div class="lin"><div><b>${esc(i.nome)}</b><small>${esc(parcNome(i.parceiroId))}</small></div><div class="r"><b class="red">${i.estoque}</b><small>mín. ${i.estoqueMinimo || 0}</small></div></div>`).join('') : '<div class="empty">Estoque em dia ✅</div>'}</div></div>`;
+}
+
+function gConf(){
+  const D = S.d, pend = D.pagamentos.filter(p => p.status === 'EM ANÁLISE');
+  const feitos = D.pagamentos.filter(p => p.status !== 'EM ANÁLISE').slice(-25).reverse();
+  const itensDe = p => { const ids = String(p.retiradaIds).split(','); return D.retiradas.filter(r => ids.includes(r.id)); };
+  $('gc').innerHTML = `<div class="card"><h2>✅ Pagamentos aguardando conferência</h2>
+  ${pend.length ? pend.map(p => { const its = itensDe(p); return `<div class="conf">
+    ${p.comprovanteId ? `<a href="${ver(p.comprovanteId)}" target="_blank" rel="noopener"><img src="${thumb(p.comprovanteId)}" alt="Comprovante"></a>` : ''}
+    <div style="flex:1"><b>${esc(p.colaborador)} · ${brl(p.valor)}</b><small>${dBR(p.dataHora)} · ${esc(its[0] ? its[0].parceiro : '')} · ${esc(p.forma)}</small>
+      <ul>${its.map(r => `<li>${r.qtd}x ${esc(r.item)} – ${brl(r.total)} <small style="display:inline">(${dBR(r.dataHora)})</small></li>`).join('')}</ul>
+      ${p.comprovanteId ? `<a class="link" href="${ver(p.comprovanteId)}" target="_blank" rel="noopener">Abrir comprovante ↗</a>` : ''}
+      <div class="row"><button class="btn sm" onclick="conferir('${esc(p.id)}','CONFIRMAR')">✓ Confirmar recebimento</button><button class="btn sm red" onclick="conferir('${esc(p.id)}','RECUSAR')">✕ Recusar</button></div></div></div>`; }).join('') : '<div class="empty">Nenhum pagamento aguardando. ✅</div>'}</div>
+  <div class="card"><h2>🕘 Últimas conferências</h2>${feitos.length ? feitos.map(p => `<div class="lin"><div><b>${esc(p.colaborador)} · ${brl(p.valor)}</b><small>${dBR(p.dataHora)} · ${esc(p.forma)}${p.obs ? ' · ' + esc(p.obs) : ''}</small></div><div class="r">${tag(p.status)}${p.comprovanteId ? `<a class="link" href="${ver(p.comprovanteId)}" target="_blank" rel="noopener">comprovante</a>` : ''}</div></div>`).join('') : '<div class="empty">—</div>'}</div>`;
+}
+function conferir(id, d){
+  let obs = '';
+  if (d === 'RECUSAR'){ obs = prompt('Motivo da recusa (o colaborador vai ver):'); if (!obs) return; }
+  else if (!confirm('Confirmar que o valor foi recebido?')) return;
+  acao('conferirPagamento', {pagamentoId:id, decisao:d, obs}, d === 'CONFIRMAR' ? 'Pagamento confirmado!' : 'Pagamento recusado.');
+}
+
+function gRet(){
+  const D = S.d, f = S.f || (S.f = {mes:mesAtual(), par:'', set:'', st:'', q:''});
+  if (!S.selR) S.selR = new Set();
+  const l = D.retiradas.filter(r => (!f.mes || String(r.dataHora).startsWith(f.mes)) && (!f.par || r.parceiroId === f.par) && (!f.set || r.setor === f.set) && (!f.st || r.status === f.st) && (!f.q || (r.colaborador + ' ' + r.item).toLowerCase().includes(f.q.toLowerCase()))).slice().reverse();
+  const opt = (v, t, cur) => `<option value="${esc(v)}" ${v === cur ? 'selected' : ''}>${esc(t)}</option>`;
+  const selT = D.retiradas.filter(r => S.selR.has(r.id));
+  $('gc').innerHTML = `<div class="card"><div class="grid">
+    <label>Mês<input type="month" value="${f.mes}" onchange="S.f.mes=this.value;gRet()"></label>
+    <label>Parceiro<select onchange="S.f.par=this.value;gRet()">${opt('', 'Todos', f.par)}${D.parceiros.map(p => opt(p.id, p.nome, f.par)).join('')}</select></label>
+    <label>Setor<select onchange="S.f.set=this.value;gRet()">${opt('', 'Todos', f.set)}${SETORES.map(s => opt(s, s, f.set)).join('')}</select></label>
+    <label>Situação<select onchange="S.f.st=this.value;gRet()">${opt('', 'Todas', f.st)}${opt('PENDENTE', 'Em aberto', f.st)}${opt('EM ANÁLISE', 'Em análise', f.st)}${opt('PAGO', 'Pago', f.st)}${opt('CANCELADA', 'Cancelada', f.st)}</select></label>
+    <label>Buscar<input value="${esc(f.q)}" placeholder="Colaborador ou item" onchange="S.f.q=this.value;gRet()"></label>
+  </div><div class="row" style="margin-top:0"><span class="note" style="margin:0">${l.length} lançamento(s) · ${brl(soma(l.filter(r => r.status !== 'CANCELADA')))}</span><button class="btn sm sec" onclick="baixarCSV(S.listaRet,'retiradas-mercadinho.csv')">⬇ Exportar CSV</button></div></div>
+  <div class="card tbl">${l.length ? `<table><tr><th></th><th>Data/hora</th><th>Colaborador</th><th>Parceiro</th><th>Item</th><th>Total</th><th>Foto</th><th>Situação</th><th></th></tr>
+    ${l.map(r => `<tr><td>${r.status === 'PENDENTE' ? `<input type="checkbox" style="width:18px;height:18px" ${S.selR.has(r.id) ? 'checked' : ''} onchange="togR('${esc(r.id)}')">` : ''}</td>
+      <td class="nw">${dBR(r.dataHora)}</td><td><b>${esc(r.colaborador)}</b><br><small>${esc(r.setor)}</small></td><td>${esc(r.parceiro)}</td>
+      <td>${r.qtd}x ${esc(r.item)}<br><small>${esc(r.modo)}${r.obs ? ' · ' + esc(r.obs) : ''}</small></td><td class="nw"><b>${brl(r.total)}</b></td>
+      <td>${r.fotoId ? `<a href="${ver(r.fotoId)}" target="_blank" rel="noopener"><img class="thumb" src="${thumb(r.fotoId)}" alt="Foto"></a>` : '—'}</td>
+      <td>${tag(r.status)}${r.pagoEm ? `<br><small>${dBR(r.pagoEm)}</small>` : ''}</td>
+      <td>${r.status === 'PENDENTE' ? `<button class="btn sm red" onclick="cancelar('${esc(r.id)}')">Cancelar</button>` : ''}</td></tr>`).join('')}</table>` : '<div class="empty">Nenhuma retirada com esses filtros.</div>'}</div>
+  ${S.selR.size ? `<div class="resumo"><div><small>${S.selR.size} selecionada(s) para baixa</small><b>${brl(soma(selT))}</b></div>
+    <select id="bxForma"><option value="">Forma de pagamento…</option><option>Dinheiro</option><option>Pix conferido</option><option>Desconto em folha</option></select>
+    <button class="btn" onclick="baixa()">Dar baixa</button></div>` : ''}`;
+  S.listaRet = l;
+}
+function togR(id){ S.selR.has(id) ? S.selR.delete(id) : S.selR.add(id); gRet(); }
+async function baixa(){
+  const forma = $('bxForma').value; if (!forma) return toast('Escolha a forma de pagamento.', 1);
+  if (!confirm(`Dar baixa em ${S.selR.size} retirada(s) como "${forma}"?`)) return;
+  const ids = [...S.selR];
+  if (await acao('baixaManual', {retiradaIds:ids, forma}, 'Baixa registrada!')) S.selR.clear();
+}
+function cancelar(id){
+  const obs = prompt('Motivo do cancelamento (o item volta para o estoque):'); if (!obs) return;
+  S.selR && S.selR.delete(id);
+  acao('cancelarRetirada', {retiradaId:id, obs}, 'Retirada cancelada e estoque devolvido.');
+}
+
+function gEst(){
+  const D = S.d, e = S.edit && S.edit.t === 'item' ? S.edit.o : {}, ps = D.parceiros;
+  $('gc').innerHTML = `<div class="card"><h2>${e.id ? '✏️ Editar item' : '➕ Novo item'}</h2>
+  ${ps.length ? `<p class="note" style="margin:-6px 0 12px">Dica: cadastre cada sabor como um item (ex.: "Geladinho – Morango") para controlar o estoque por sabor.</p>
+  <div class="grid">
+    <label>Parceiro<select id="iParc">${ps.map(p => `<option value="${esc(p.id)}" ${e.parceiroId === p.id ? 'selected' : ''}>${esc(p.nome)}</option>`).join('')}</select></label>
+    <label>Nome do item / sabor<input id="iNome" value="${esc(e.nome || '')}"></label>
+    <label>Preço (R$)<input id="iPreco" type="number" step="0.01" min="0" value="${e.preco ?? ''}"></label>
+    ${e.id ? '' : '<label>Estoque inicial<input id="iEst" type="number" min="0" value="0"></label>'}
+    <label>Avisar quando chegar a<input id="iMin" type="number" min="0" value="${e.estoqueMinimo ?? 3}"></label>
+    <label>Disponível<select id="iAtivo"><option value="SIM" ${e.ativo !== 'NÃO' ? 'selected' : ''}>Sim</option><option value="NÃO" ${e.ativo === 'NÃO' ? 'selected' : ''}>Não (ocultar)</option></select></label>
+  </div><div class="row"><button class="btn" onclick="salvarItem('${esc(e.id || '')}')">Salvar item</button>${e.id ? '<button class="btn sec" onclick="S.edit=null;gestor()">Cancelar</button>' : ''}</div>` : '<div class="empty">Cadastre um parceiro primeiro (aba Parceiros).</div>'}</div>
+  ${ps.map(p => { const its = D.itens.filter(i => i.parceiroId === p.id); if (!its.length) return ''; return `<div class="card"><h2>${esc(p.nome)}${sim(p.ativo) ? '' : ' <span class="tag mu">parceiro inativo</span>'}</h2><div class="tbl"><table>
+    <tr><th>Item</th><th>Preço</th><th>Estoque</th><th>Aviso</th><th>Disponível</th><th></th></tr>
+    ${its.map(i => `<tr><td><b>${esc(i.nome)}</b></td><td>${brl(i.preco)}</td><td><b class="${+i.estoque <= (+i.estoqueMinimo || 0) ? 'red' : ''}">${i.estoque}</b></td><td>${i.estoqueMinimo || 0}</td><td>${sim(i.ativo) ? 'Sim' : 'Não'}</td>
+      <td class="nw"><button class="btn sm" onclick="movEst('${esc(i.id)}','ENTRADA')">+ Entrada</button> <button class="btn sm sec" onclick="movEst('${esc(i.id)}','AJUSTE')">Contagem</button> <button class="btn sm sec" onclick="editar('item','${esc(i.id)}')">Editar</button></td></tr>`).join('')}
+  </table></div></div>`; }).join('')}
+  <div class="card"><h2>🔄 Últimas movimentações de estoque</h2>${D.movimentos.length ? D.movimentos.slice(-40).reverse().map(m => `<div class="lin"><div><b>${esc(m.item)}</b><small>${dBR(m.dataHora)} · ${esc(m.tipo)}${m.obs ? ' · ' + esc(m.obs) : ''}</small></div><div class="r"><b class="${+m.qtd < 0 ? 'red' : ''}">${+m.qtd > 0 ? '+' : ''}${m.qtd}</b><small>saldo ${m.saldo}</small></div></div>`).join('') : '<div class="empty">Sem movimentações.</div>'}</div>`;
+}
+function salvarItem(id){
+  acao('salvarItem', {item:{id, parceiroId:$('iParc').value, nome:$('iNome').value, preco:$('iPreco').value, estoqueInicial:$('iEst') ? $('iEst').value : 0, estoqueMinimo:$('iMin').value, ativo:$('iAtivo').value}}, 'Item salvo!');
+}
+function movEst(id, tipo){
+  const i = S.d.itens.find(x => x.id === id);
+  if (tipo === 'ENTRADA'){
+    const q = prompt(`Quantas unidades de "${i.nome}" chegaram? (estoque atual: ${i.estoque})`); if (!q) return;
+    const obs = prompt('Observação (opcional — ex.: entrega do dia):') || '';
+    acao('movEstoque', {itemId:id, tipo, qtd:q, obs}, 'Entrada registrada!');
+  } else {
+    const q = prompt(`Contagem real de "${i.nome}" agora (sistema mostra ${i.estoque}):`); if (q === null || q === '') return;
+    const obs = prompt('Motivo do ajuste (obrigatório):'); if (!obs) return;
+    acao('movEstoque', {itemId:id, tipo, qtd:q, obs}, 'Estoque ajustado!');
+  }
+}
+
+function gCol(){
+  const D = S.d, e = S.edit && S.edit.t === 'colab' ? S.edit.o : {};
+  const ab = id => soma(D.retiradas.filter(r => r.colaboradorId === id && r.status === 'PENDENTE'));
+  $('gc').innerHTML = `<div class="card"><h2>${e.id ? '✏️ Editar colaborador' : '➕ Novo colaborador'}</h2><div class="grid">
+    <label>Nome completo<input id="cNome" value="${esc(e.nome || '')}"></label>
+    <label>Setor<select id="cSetor"><option value="">Selecione</option>${SETORES.map(s => `<option ${e.setor === s ? 'selected' : ''}>${s}</option>`).join('')}</select></label>
+    <label>Ativo<select id="cAtivo"><option value="SIM" ${e.ativo !== 'NÃO' ? 'selected' : ''}>Sim</option><option value="NÃO" ${e.ativo === 'NÃO' ? 'selected' : ''}>Não</option></select></label>
+  </div><p class="note" style="margin-top:0">O colaborador cria o próprio PIN no primeiro acesso.</p>
+  <div class="row"><button class="btn" onclick="salvarColab('${esc(e.id || '')}')">Salvar</button>${e.id ? '<button class="btn sec" onclick="S.edit=null;gestor()">Cancelar</button>' : ''}</div></div>
+  ${SETORES.map(s => { const l = D.colaboradores.filter(c => c.setor === s); if (!l.length) return ''; return `<div class="card"><h2>${s} <span class="tag mu">${l.length}</span></h2>
+    ${l.map(c => `<div class="lin"><div><b>${esc(c.nome)}</b> ${sim(c.ativo) ? '' : '<span class="tag mu">inativo</span>'}<small>${c.temPin ? 'PIN criado' : 'Ainda não acessou'} · Em aberto: ${brl(ab(c.id))}</small></div>
+      <div class="r"><div class="nw"><button class="btn sm sec" onclick="editar('colab','${esc(c.id)}')">Editar</button> ${c.temPin ? `<button class="btn sm sec" onclick="resetPin('${esc(c.id)}')">Zerar PIN</button>` : ''}</div></div></div>`).join('')}</div>`; }).join('')}`;
+}
+function salvarColab(id){ acao('salvarColaborador', {colab:{id, nome:$('cNome').value, setor:$('cSetor').value, ativo:$('cAtivo').value}}, 'Colaborador salvo!'); }
+function resetPin(id){
+  const c = S.d.colaboradores.find(x => x.id === id);
+  if (confirm(`Zerar o PIN de ${c.nome}? No próximo acesso ele cria um novo.`)) acao('resetarPin', {colabId:id}, 'PIN zerado.');
+}
+
+function gPar(){
+  const D = S.d, e = S.edit && S.edit.t === 'parc' ? S.edit.o : {};
+  $('gc').innerHTML = `<div class="card"><h2>${e.id ? '✏️ Editar parceiro' : '➕ Novo parceiro'}</h2><div class="grid">
+    <label>Nome do parceiro<input id="pNome" value="${esc(e.nome || '')}"></label>
+    <label>Contato responsável<input id="pContato" value="${esc(e.contato || '')}"></label>
+    <label>WhatsApp<input id="pFone" value="${esc(e.whatsapp || '')}" placeholder="(67) 9…"></label>
+    <label>Ativo<select id="pAtivo"><option value="SIM" ${e.ativo !== 'NÃO' ? 'selected' : ''}>Sim</option><option value="NÃO" ${e.ativo === 'NÃO' ? 'selected' : ''}>Não</option></select></label>
+  </div>
+  <label>Como o colaborador paga (aparece na hora do pagamento)<textarea id="pPag" placeholder="Ex.: Pix CNPJ 00.000.000/0001-00 – Nome do favorecido">${esc(e.pagamento || '')}</textarea></label>
+  <div class="row"><button class="btn" onclick="salvarParc('${esc(e.id || '')}')">Salvar parceiro</button>${e.id ? '<button class="btn sec" onclick="S.edit=null;gestor()">Cancelar</button>' : ''}</div></div>
+  <div class="card"><h2>Parceiros</h2>${D.parceiros.length ? D.parceiros.map(p => `<div class="lin"><div><b>${esc(p.nome)}</b> ${sim(p.ativo) ? '' : '<span class="tag mu">inativo</span>'}<small>${esc(p.contato || '—')} · ${esc(p.whatsapp || '—')} · ${D.itens.filter(i => i.parceiroId === p.id).length} item(ns)${p.pagamento ? '' : ' · <span class="red">sem forma de pagamento</span>'}</small></div><div class="r"><button class="btn sm sec" onclick="editar('parc','${esc(p.id)}')">Editar</button></div></div>`).join('') : '<div class="empty">Nenhum parceiro cadastrado.</div>'}</div>`;
+}
+function salvarParc(id){ acao('salvarParceiro', {parceiro:{id, nome:$('pNome').value, contato:$('pContato').value, whatsapp:$('pFone').value, pagamento:$('pPag').value, ativo:$('pAtivo').value}}, 'Parceiro salvo!'); }
+
+function gFech(){
+  const D = S.d, m = S.fm || mesAtual(), pid = S.fp || (D.parceiros[0] || {}).id;
+  if (!pid){ $('gc').innerHTML = '<div class="card empty">Cadastre um parceiro primeiro.</div>'; return; }
+  const l = D.retiradas.filter(r => r.parceiroId === pid && String(r.dataHora).startsWith(m) && r.status !== 'CANCELADA').sort((a, b) => String(a.dataHora).localeCompare(String(b.dataHora)));
+  const st = s => soma(l.filter(r => r.status === s)), ic = {PAGO:'✅', 'EM ANÁLISE':'🔎', PENDENTE:'⏳'};
+  const msgP = `📊 *FECHAMENTO – MERCADINHO DE TODOS*
+🤝 Parceiro: *${parcNome(pid)}*
+📅 Período: ${mesNome(m)}
+
+${l.length ? l.map(r => `${ic[r.status] || ''} ${dBR(r.dataHora)} – ${r.colaborador} – ${r.qtd}x ${r.item} – ${brl(r.total)}`).join('\n') : 'Nenhuma retirada no período.'}
+
+🧾 Retiradas: ${l.length}
+💰 Total: *${brl(soma(l))}*
+✅ Pago e conferido: ${brl(st('PAGO'))}
+🔎 Em conferência: ${brl(st('EM ANÁLISE'))}
+⏳ Em aberto: *${brl(st('PENDENTE'))}*
+
+Legenda: ✅ pago · 🔎 em conferência · ⏳ em aberto
+Por favor, confiram com os registros do grupo e nos avisem se houver qualquer divergência. Obrigado pela parceria! 💚`;
+  const g = {}; l.filter(r => r.status === 'PENDENTE').forEach(r => (g[r.colaborador] = g[r.colaborador] || []).push(r));
+  const nomes = Object.keys(g).sort();
+  S.msgs = [msgP, ...nomes.map(n => `Olá, ${n.split(' ')[0]}! 😊
+Passando o resumo do *Mercadinho de TODOS* (${parcNome(pid)} – ${mesNome(m)}):
+
+${g[n].map(r => `• ${dBR(r.dataHora)} – ${r.qtd}x ${r.item} – ${brl(r.total)}`).join('\n')}
+
+💰 Total em aberto: *${brl(soma(g[n]))}*
+Para pagar, acesse o Mercadinho de TODOS > "Pagar o que está em aberto" e anexe o comprovante.
+Qualquer dúvida, fale com o Thiago (Parcerias). Obrigado!`)];
+  $('gc').innerHTML = `<div class="card"><div class="grid">
+    <label>Mês<input type="month" value="${m}" onchange="S.fm=this.value;gFech()"></label>
+    <label>Parceiro<select onchange="S.fp=this.value;gFech()">${D.parceiros.map(p => `<option value="${esc(p.id)}" ${p.id === pid ? 'selected' : ''}>${esc(p.nome)}</option>`).join('')}</select></label>
+  </div><div class="row" style="margin-top:0"><button class="btn sm sec" onclick="baixarCSV(S.listaFech,'fechamento-${m}.csv')">⬇ Exportar CSV do fechamento</button></div></div>
+  <div class="two"><div class="card"><h2>📲 Mensagem para o grupo do parceiro</h2><pre>${esc(msgP)}</pre><div class="row"><button class="btn" onclick="copiar(S.msgs[0])">Copiar</button></div></div>
+  <div class="card"><h2>💬 Cobranças de quem está em aberto</h2>${nomes.length ? nomes.map((n, i) => `<div class="lin"><div><b>${esc(n)}</b><small>${g[n].length} item(ns)</small></div><div class="r"><b>${brl(soma(g[n]))}</b><button class="btn sm" onclick="copiar(S.msgs[${i + 1}])">Copiar cobrança</button></div></div>`).join('') : '<div class="empty">Ninguém em aberto neste parceiro/mês. ✅</div>'}</div></div>`;
+  S.listaFech = l;
+}
+
+iniciar();
+</script>
+</body>
+</html>
